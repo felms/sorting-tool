@@ -31,19 +31,13 @@ public class Main {
     }
 
     private static void readLongs() {
-        Map<Long, Integer> numberFrequency = new Hashtable<>();
+        List<Long> numbers = new ArrayList<>();
         Long greatestNumber = Long.MIN_VALUE;
         int countNumbers = 0;
 
         while (scanner.hasNextLong()) {
             long number = scanner.nextLong();
-            if (numberFrequency.containsKey(number)) {
-                int frequency = numberFrequency.get(number);
-                frequency++;
-                numberFrequency.replace(number, frequency);
-            } else {
-                numberFrequency.put(number, 1);
-            }
+            numbers.add(number);
             if (number > greatestNumber) {
                 greatestNumber = number;
             }
@@ -52,60 +46,52 @@ public class Main {
 
         System.out.printf("Total numbers: %d.\n" +
                 "The greatest number: %d ( %d time(s)).",
-                countNumbers, greatestNumber, numberFrequency.get(greatestNumber));
+                countNumbers, greatestNumber, Collections.frequency(numbers, greatestNumber));
     }
 
     private static void readLines() {
-        Map<String, Integer> lineFrequency = new Hashtable<>();
+        List<String> lines = new ArrayList<>();
         String  longestLine = "";
         int countLines = 0;
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            if (lineFrequency.containsKey(line)) {
-                int frequency = lineFrequency.get(line);
-                frequency++;
-                lineFrequency.replace(line, frequency);
-            } else {
-                lineFrequency.put(line, 1);
-            }
+            lines.add(line);
             if (line.length() > longestLine.length()) {
                 longestLine = line;
             }
             countLines++;
         }
 
-        int percentage = (int) (((double) lineFrequency.get(longestLine) / (double)countLines) * 100);
+        int frequency = Collections.frequency(lines, longestLine);
+
+        int percentage = (int) (((double) frequency / (double)countLines) * 100);
         System.out.println("Total lines: " + countLines + ".\n" +
                 "The longest line:\n" + 
                 longestLine + "\n" + 
-                "(" + lineFrequency.get(longestLine) + " time(s), " + 
+                "(" + frequency + " time(s), " + 
                  percentage + "%).");
     }
 
     private static void readWords() {
-        Map<String, Integer> wordFrequency = new Hashtable<>();
+        List<String> words = new ArrayList<>();
         String  longestWord = "";
         int countWords = 0;
 
         while (scanner.hasNext()) {
             String word = scanner.next();
-            if (wordFrequency.containsKey(word)) {
-                int frequency = wordFrequency.get(word);
-                frequency++;
-                wordFrequency.replace(word, frequency);
-            } else {
-                wordFrequency.put(word, 1);
-            }
+            words.add(word);
             if (word.length() > longestWord.length()) {
                 longestWord = word;
             }
             countWords++;
         }
 
-        int percentage = (int)(((double) wordFrequency.get(longestWord) / (double) countWords) * 100);
+        int frequency = Collections.frequency(words, longestWord);
+
+        int percentage = (int)(((double) frequency / (double) countWords) * 100);
         System.out.println("Total words: " + countWords + ".\n" +
-                "The longest word: " + longestWord + " (" + wordFrequency.get(longestWord) + " time(s), " + 
+                "The longest word: " + longestWord + " (" + frequency + " time(s), " + 
                  percentage + "%).");
     }
 }
