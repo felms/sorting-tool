@@ -1,4 +1,4 @@
-# Phone Book
+# Sorting Tool
 Praticas do Jetbrains Academy: Projeto Sorting Tool
 
 
