@@ -1,20 +1,39 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import java.util.Scanner;
 
 public class Main {
 
     private static Scanner scanner;
+    private static String inputType;
     public static void main(final String[] args) {
         scanner = new Scanner(System.in);
 
-        String datatype; 
+        if (args.length > 0) {
 
-        if (args.length == 2) {
-            datatype = args[1];
+            // Testa se a opção '-sortIntegers' está presente
+            // caso esteja executa o método adequado
+            if (Arrays.asList(args).contains("-sortIntegers")) {
+                sortIntegers();
+            } else if ("-dataType".equals(args[0])){
+                inputType = args[1];
+                statsForDatatypes();
+            }
+
         } else {
-            datatype = "word";
+            inputType = "word";
+            statsForDatatypes();
         }
 
-        switch(datatype) {
+        scanner.close();
+    }
+
+    private static void statsForDatatypes() {
+
+        switch(inputType) {
             case "long":
                 readLongs();
                 break;
@@ -25,14 +44,26 @@ public class Main {
                 readWords();
                 break;
         }
+    }
 
+    private static void sortIntegers() {
+        List<Long> numbers = new ArrayList<>();
+        while (scanner.hasNext()) {
+            long number = scanner.nextLong();
+            numbers.add(number);
+        }
 
-        scanner.close();
+        numbers.sort(Long::compare);
+        StringBuilder res = new StringBuilder();
+        numbers.forEach(number -> res.append(number).append(" "));
+
+        System.out.println("Total numbers: " + numbers.size() + ".\n" +
+                "Sorted data: " + res);
     }
 
     private static void readLongs() {
         List<Long> numbers = new ArrayList<>();
-        Long greatestNumber = Long.MIN_VALUE;
+        long greatestNumber = Long.MIN_VALUE;
         int countNumbers = 0;
 
         while (scanner.hasNextLong()) {
@@ -45,7 +76,7 @@ public class Main {
         }
 
         System.out.printf("Total numbers: %d.\n" +
-                "The greatest number: %d ( %d time(s)).",
+                        "The greatest number: %d ( %d time(s)).",
                 countNumbers, greatestNumber, Collections.frequency(numbers, greatestNumber));
     }
 
@@ -67,10 +98,10 @@ public class Main {
 
         int percentage = (int) (((double) frequency / (double)countLines) * 100);
         System.out.println("Total lines: " + countLines + ".\n" +
-                "The longest line:\n" + 
-                longestLine + "\n" + 
-                "(" + frequency + " time(s), " + 
-                 percentage + "%).");
+                "The longest line:\n" +
+                longestLine + "\n" +
+                "(" + frequency + " time(s), " +
+                percentage + "%).");
     }
 
     private static void readWords() {
@@ -91,7 +122,7 @@ public class Main {
 
         int percentage = (int)(((double) frequency / (double) countWords) * 100);
         System.out.println("Total words: " + countWords + ".\n" +
-                "The longest word: " + longestWord + " (" + frequency + " time(s), " + 
-                 percentage + "%).");
+                "The longest word: " + longestWord + " (" + frequency + " time(s), " +
+                percentage + "%).");
     }
 }
