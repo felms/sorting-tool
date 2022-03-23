@@ -10,49 +10,68 @@ import java.util.Scanner;
 public class Main {
 
     private static Scanner scanner;
-    private static String inputType;
+
     public static void main(final String[] args) {
         scanner = new Scanner(System.in);
+        List<String> arguments = Arrays.asList(args);
 
-        if (args.length > 0) {
+        String dataType = "word";
+        int dtIndex = arguments.indexOf("-dataType");
+        if (dtIndex >= 0) {
+            dataType = arguments.get(dtIndex + 1);
+        }
 
-            // Testa se a opção '-sortingType' está presente
-            // caso esteja executa o método adequado
-            if (Arrays.asList(args).contains("-sortingType")) {
-                sortIntegers();
-            } else if ("-dataType".equals(args[0])){
-                inputType = args[1];
-                statsForDatatypes();
-            }
 
-        } else {
-            inputType = "word";
-            statsForDatatypes();
+        String sortingType = "natural";
+        int stIndex = arguments.indexOf("-sortingType");
+        if (stIndex >=0) {
+            sortingType = arguments.get(stIndex + 1);
+        }
+
+        switch(sortingType) {
+            case "natural":
+                naturalSorting(dataType);
+                break;
+            case "byCount":
+                sortByCount(dataType);
+                break;
         }
 
         scanner.close();
     }
 
-    private static void statsForDatatypes() {
-
-        switch(inputType) {
+    private static void naturalSorting(String dataType) {
+        switch (dataType) {
             case "long":
-                readLongs();
-                break;
-            case "line":
-                readLines();
+                sortNumbers();
                 break;
             case "word":
-                readWords();
+                sortWords();
+                break;
+            case "line":
+                sortLines();
                 break;
         }
     }
 
-    private static void sortByCount() {
+    private static void sortByCount(String dataType) {
+        switch (dataType) {
+            case "long":
+                sortLongsByCount();
+                break;
+            case "word":
+                sortWordsByCount();
+                break;
+            case "line":
+                sortLinesByCount();
+                break;
+        }
+    }
+
+    private static void sortLongsByCount() {
         List<Long> numbers = new ArrayList<>();
         while (scanner.hasNext()) {
-            long number = scanner.nextLong();
-            numbers.add(number);
+            numbers.add(scanner.nextLong());
         }
 
         Map<Long, Integer> valueFrequency = new HashMap<>();
@@ -69,7 +88,52 @@ public class Main {
         });
     }
 
-    private static void sortIntegers() {
+    private static void sortWordsByCount() {
+        List<String> words = new ArrayList<>();
+        while (scanner.hasNext()) {
+            words.add(scanner.next());
+        }
+
+        Map<String, Integer> wordFrequency = new HashMap<>();
+        words.forEach(word -> wordFrequency.putIfAbsent(word, Collections.frequency(words, word)));
+
+        List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(wordFrequency.entrySet());
+        Comparator<Map.Entry<String, Integer>> comparator0 = Map.Entry.comparingByValue();
+        Comparator<Map.Entry<String, Integer>> comparator1 = Map.Entry.comparingByKey();
+
+        sortedList.sort(comparator0.thenComparing(comparator1));
+
+        System.out.printf("Total words: %d.\n", words.size());
+        sortedList.forEach(entry -> {
+            int percentage = (int) (((double) entry.getValue() / (double) words.size()) * 100);
+            System.out.println(entry.getKey() + ": " + entry.getValue()  + " time(s), " + percentage + "%");
+        });
+    }
+
+    private static void sortLinesByCount() {
+        List<String> lines = new ArrayList<>();
+        while (scanner.hasNext()) {
+            lines.add(scanner.nextLine());
+        }
+
+        Map<String, Integer> lineFrequency = new HashMap<>();
+        lines.forEach(line -> lineFrequency.putIfAbsent(line, Collections.frequency(lines, line)));
+
+        List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(lineFrequency.entrySet());
+        Comparator<Map.Entry<String, Integer>> comparator0 = Map.Entry.comparingByValue();
+        Comparator<Map.Entry<String, Integer>> comparator1 = Map.Entry.comparingByKey();
+
+        sortedList.sort(comparator0.thenComparing(comparator1));
+
+
+        System.out.printf("Total lines: %d.\n", lines.size());
+        sortedList.forEach(entry -> {
+            int percentage = (int) (((double) entry.getValue() / (double) lines.size()) * 100);
+            System.out.println(entry.getKey() + ": " + entry.getValue()  + " time(s), " + percentage + "%");
+        });
+    }
+
+    private static void sortNumbers() {
         List<Long> numbers = new ArrayList<>();
         while (scanner.hasNext()) {
             long number = scanner.nextLong();
@@ -84,68 +148,35 @@ public class Main {
                 "Sorted data: " + res);
     }
 
-    private static void readLongs() {
-        List<Long> numbers = new ArrayList<>();
-        long greatestNumber = Long.MIN_VALUE;
-        int countNumbers = 0;
-
-        while (scanner.hasNextLong()) {
-            long number = scanner.nextLong();
-            numbers.add(number);
-            if (number > greatestNumber) {
-                greatestNumber = number;
-            }
-            countNumbers++;
-        }
-
-        System.out.printf("Total numbers: %d.\n" +
-                        "The greatest number: %d ( %d time(s)).",
-                countNumbers, greatestNumber, Collections.frequency(numbers, greatestNumber));
-    }
-
-    private static void readLines() {
-        List<String> lines = new ArrayList<>();
-        String  longestLine = "";
-        int countLines = 0;
-
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            lines.add(line);
-            if (line.length() > longestLine.length()) {
-                longestLine = line;
-            }
-            countLines++;
-        }
-
-        int frequency = Collections.frequency(lines, longestLine);
-
-        int percentage = (int) (((double) frequency / (double)countLines) * 100);
-        System.out.println("Total lines: " + countLines + ".\n" +
-                "The longest line:\n" +
-                longestLine + "\n" +
-                "(" + frequency + " time(s), " +
-                percentage + "%).");
-    }
-
-    private static void readWords() {
+    private static void sortWords() {
         List<String> words = new ArrayList<>();
-        String  longestWord = "";
-        int countWords = 0;
 
         while (scanner.hasNext()) {
-            String word = scanner.next();
-            words.add(word);
-            if (word.length() > longestWord.length()) {
-                longestWord = word;
-            }
-            countWords++;
+            words.add(scanner.next());
         }
 
-        int frequency = Collections.frequency(words, longestWord);
+        words.sort(String::compareTo);
+        StringBuilder res = new StringBuilder();
+        words.forEach(word -> res.append(word).append(" "));
 
-        int percentage = (int)(((double) frequency / (double) countWords) * 100);
-        System.out.println("Total words: " + countWords + ".\n" +
-                "The longest word: " + longestWord + " (" + frequency + " time(s), " +
-                percentage + "%).");
+        System.out.println("Total words: " + words.size() + ".\n" +
+                "Sorted data: " + res);
     }
+
+    private static void sortLines() {
+        List<String> lines = new ArrayList<>();
+
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine());
+        }
+
+        lines.sort(String::compareTo);
+        StringBuilder res = new StringBuilder();
+        lines.forEach(line -> res.append(line).append("\n"));
+
+        System.out.println("Total lines: " + lines.size() + ".\n" +
+                "Sorted data:\n" + res);
+    }
+
+
 }
