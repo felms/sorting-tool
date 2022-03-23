@@ -14,18 +14,36 @@ public class Main {
     public static void main(final String[] args) {
         scanner = new Scanner(System.in);
         List<String> arguments = Arrays.asList(args);
+        List<String> validArguments = List.of("-sortingType", "-dataType",
+                                                "natural", "byCount",
+                                                "long", "word", "line");
+        arguments.forEach(arg -> {
+            if (!validArguments.contains(arg)) {
+                System.out.println("\"" + arg + "\" is not a valid parameter. It will be skipped.");
+            }
+        });
 
         String dataType = "word";
         int dtIndex = arguments.indexOf("-dataType");
         if (dtIndex >= 0) {
-            dataType = arguments.get(dtIndex + 1);
+            try{
+                dataType = arguments.get(dtIndex + 1);
+            } catch (IndexOutOfBoundsException exception) {
+                System.out.println("No data type defined!");
+                return;
+            }
         }
 
 
         String sortingType = "natural";
         int stIndex = arguments.indexOf("-sortingType");
         if (stIndex >=0) {
-            sortingType = arguments.get(stIndex + 1);
+            try{
+                sortingType = arguments.get(stIndex + 1);
+            } catch (IndexOutOfBoundsException exception) {
+                System.out.println("No sorting type defined!");
+                return;
+            }
         }
 
         switch(sortingType) {
