@@ -1,8 +1,10 @@
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -14,9 +16,9 @@ public class Main {
 
         if (args.length > 0) {
 
-            // Testa se a opção '-sortIntegers' está presente
+            // Testa se a opção '-sortingType' está presente
             // caso esteja executa o método adequado
-            if (Arrays.asList(args).contains("-sortIntegers")) {
+            if (Arrays.asList(args).contains("-sortingType")) {
                 sortIntegers();
             } else if ("-dataType".equals(args[0])){
                 inputType = args[1];
@@ -44,6 +46,27 @@ public class Main {
                 readWords();
                 break;
         }
+    }
+
+    private static void sortByCount() {
+        List<Long> numbers = new ArrayList<>();
+        while (scanner.hasNext()) {
+            long number = scanner.nextLong();
+            numbers.add(number);
+        }
+
+        Map<Long, Integer> valueFrequency = new HashMap<>();
+        numbers.forEach(number -> valueFrequency.putIfAbsent(number, Collections.frequency(numbers, number)));
+
+        List<Map.Entry<Long, Integer>> sortedList = new ArrayList<>(valueFrequency.entrySet());
+        sortedList.sort(Map.Entry.comparingByValue());
+
+
+        System.out.printf("Total numbers: %d.\n", numbers.size());
+        sortedList.forEach(entry -> {
+            int percentage = (int) (((double) entry.getValue() / (double) numbers.size()) * 100);
+            System.out.println(entry.getKey() + ": " + entry.getValue()  + " time(s), " + percentage + "%");
+        });
     }
 
     private static void sortIntegers() {
